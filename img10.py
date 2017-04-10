@@ -17,7 +17,7 @@ import cloudstorage as gcs
 
 
 # Images removed after timeout (in seconds)
-TIMEOUT = 1800
+TIMEOUT = 86400
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -161,16 +161,8 @@ class Upload(webapp2.RequestHandler):
                      thumbnail=thumbnail)
         img_key = img.put()
         img_url = self.request.host_url + '/' + id + extension
-
-        if self.request.headers.get('User-Agent').find('curl') >= 0:
-            self.response.headers['Content-Type'] = 'text/plain'
-            self.response.write(img_url + "\n")
-        else:
-            self.response.write(TEMPLATE.render({
-                'img_id': img_key.id(),
-                'img_url': self.request.host_url + '/' + id + extension
-            }))
-
+        self.response.headers['Content-Type'] = 'text/plain'
+        self.response.write(img_url + "\n")
 
 class LetsEncrypt(webapp2.RequestHandler):
     """ LetsEncrypt handler to verify ACME requests """
